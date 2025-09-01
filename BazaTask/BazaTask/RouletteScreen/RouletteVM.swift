@@ -32,40 +32,42 @@ final class RouletteVM: ObservableObject {
 
     func spin() {
         guard !isSpinning, selectedBet != nil else { return }
-
+        
         isSpinning = true
         result = nil
-
+        
         // Generate random rotation for fair spinning
         let randomSpins = Double(Int.random(in: 3...6)) * 360.0
         let randomOffset = Double.random(in: 0...360)
         
         // Calculate new rotation
         let newRotation = rotation - (randomSpins + randomOffset)
-
+        
         withAnimation(.easeOut(duration: 3.2)) {
             rotation = newRotation
         }
-
+        
         // Calculate result based on where the pointer lands after animation
-        DispatchQueue.main.asyncAfter(deadline: .now() + 3.2) { [weak self] in
-            guard let self = self else { return }
-            
-            // Calculate which pocket the pointer is pointing to
-            // The pointer is positioned above the wheel at the top (0 degrees), 
-            // so we need to find which segment is aligned with the top after rotation
-            let normalizedRotation = abs(newRotation.truncatingRemainder(dividingBy: 360))
-            let segmentIndex = Int((normalizedRotation / self.slotAngle).rounded())
-            let actualIndex = segmentIndex % 37
-            
-            // Get the number from the order array at this index
-            self.result = self.order[actualIndex]
-            self.isSpinning = false
-        }
+                DispatchQueue.main.asyncAfter(deadline: .now() + 3.2) { [weak self] in
+                    guard let self = self else { return }
+        
+                    // Calculate which pocket the pointer is pointing to
+                    // The pointer is positioned above the wheel at the top (0 degrees),
+                    // so we need to find which segment is aligned with the top after rotation
+                    let normalizedRotation = abs(newRotation.truncatingRemainder(dividingBy: 360))
+                    let segmentIndex = Int((normalizedRotation / self.slotAngle).rounded())
+                    let actualIndex = segmentIndex % 37
+        
+                    // Get the number from the order array at this index
+                    self.result = self.order[actualIndex]
+                    self.isSpinning = false
+  
     }
 
     func isWin() -> Bool? {
         guard let bet = selectedBet, let res = result else { return nil }
         return bet == res
     }
+    
+
 }

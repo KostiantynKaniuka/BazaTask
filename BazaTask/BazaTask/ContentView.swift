@@ -9,7 +9,6 @@ import SwiftUI
 
 struct ContentView: View {
     @StateObject private var vm = RouletteVM()
-    @State private var showResultBanner = false
 
     var body: some View {
         ScrollView {
@@ -38,13 +37,6 @@ struct ContentView: View {
                     
                     Button(action: {
                         vm.spin()
-                        // show banner shortly after result
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 3.25) {
-                            withAnimation { showResultBanner = true }
-                            DispatchQueue.main.asyncAfter(deadline: .now() + 1.8) {
-                                withAnimation { showResultBanner = false }
-                            }
-                        }
                     }) {
                         HStack(spacing: 8) {
                             Image(systemName: vm.isSpinning ? "arrow.triangle.2.circlepath" : (vm.selectedBet == nil ? "hand.tap" : "play.circle.fill"))
@@ -59,7 +51,7 @@ struct ContentView: View {
                     .disabled(vm.isSpinning || vm.selectedBet == nil)
                     
                     if let res = vm.result {
-                        ResultBadge(result: res, win: vm.isWin())
+                        ResultBadge(result: res, win: $vm.isWin)
                     } else {
                         Text(vm.selectedBet != nil ? "Bet on: \(vm.selectedBet!)" : "Tap a number below to bet")
                             .font(.subheadline)
@@ -76,13 +68,6 @@ struct ContentView: View {
                 .padding(.horizontal)
             }
             .padding()
-            .overlay(alignment: .top) {
-                if showResultBanner, let win = vm.isWin(), let res = vm.result {
-                    BannerView(text: win ? "WIN — \(res)" : "LOSE — \(res)", isWin: win)
-                        .transition(.move(edge: .top).combined(with: .opacity))
-                        .padding(.top, 8)
-                }
-            }
         }
     }
 }
