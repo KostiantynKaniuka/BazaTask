@@ -59,7 +59,7 @@ struct RouletteWheel: View {
             }
         }
         .clipShape(Circle())
-        .rotationEffect(.degrees(-90)) // so index 0 starts at top
+        .rotationEffect(.degrees(-95)) // so index 0 starts at top
         .rotationEffect(.degrees(rotation))
         .shadow(radius: 8)
     }
@@ -87,9 +87,10 @@ struct SegmentShape: Shape {
 struct TrianglePointer: Shape {
     func path(in rect: CGRect) -> Path {
         var path = Path()
-        path.move(to: CGPoint(x: rect.midX, y: rect.minY))
-        path.addLine(to: CGPoint(x: rect.maxX, y: rect.maxY))
-        path.addLine(to: CGPoint(x: rect.minX, y: rect.maxY))
+        // Flip the triangle upside down - point at the bottom, base at the top
+        path.move(to: CGPoint(x: rect.midX, y: rect.maxY))
+        path.addLine(to: CGPoint(x: rect.minX, y: rect.minY))
+        path.addLine(to: CGPoint(x: rect.maxX, y: rect.minY))
         path.closeSubpath()
         return path
     }

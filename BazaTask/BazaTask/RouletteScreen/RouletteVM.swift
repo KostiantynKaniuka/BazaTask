@@ -13,7 +13,7 @@ final class RouletteVM: ObservableObject {
         0, 32, 15, 19, 4, 21, 2, 25, 17, 34, 6, 27, 13, 36, 11, 30, 8, 23,
         10, 5, 24, 16, 33, 1, 20, 14, 31, 9, 22, 18, 29, 7, 28, 12, 35, 3, 26
     ]
-
+    
     var pockets: [Pocket] {
         order.map { n in
             if n == 0 { return Pocket(number: n, color: .green) }
@@ -22,46 +22,40 @@ final class RouletteVM: ObservableObject {
             return Pocket(number: n, color: reds.contains(n) ? .red : .black)
         }
     }
-
-
+    
     @Published var selectedBet: Int? = nil
     @Published var result: Int? = nil
     @Published var isSpinning: Bool = false
     @Published var rotation: Double = 0
-
+    
     private let slotAngle: Double = 360.0 / 37.0
-
+    
     func spin() {
-        guard !isSpinning else { return }
-
+        guard !isSpinning, selectedBet != nil else { return }
+        
         isSpinning = true
         result = nil
-
-        // Random target; you can bias or make it deterministic if needed
-        let target = order.randomElement()!
-        let index = order.firstIndex(of: target)!
-
-        // We want the center of the target segment to align with the pointer at the top.
-        let targetCenterFromTop = (Double(index) * slotAngle) + (slotAngle / 2.0)
-
-        // Add several full spins for flair
-        let fullSpins = Double(Int.random(in: 3...6)) * 360.0
-
-        // Rotate NEGATIVE to move clockwise visually (SwiftUI uses screen coords)
-        let newRotation = rotation - (fullSpins + targetCenterFromTop)
-
+        
+        let randomSpins = Double(Int.random(in: 3...6)) * 360.0
+        let randomOffset = Double.random(in: 0...360)
+        let newRotation = rotation - (randomSpins + randomOffset)
+        
         withAnimation(.easeOut(duration: 3.2)) {
             rotation = newRotation
         }
-
-        // Mark result after the animation completes
+        
+       
         DispatchQueue.main.asyncAfter(deadline: .now() + 3.2) { [weak self] in
             guard let self = self else { return }
-            self.result = target
+            let normalizedRotation = abs(newRotation.truncatingRemainder(dividingBy: 360))
+            let segmentIndex = Int((normalizedRotation / self.slotAngle).rounded())
+            let actualIndex = segmentIndex % 37
+            
+            self.result = self.order[actualIndex]
             self.isSpinning = false
         }
     }
-
+    
     func isWin() -> Bool? {
         guard let bet = selectedBet, let res = result else { return nil }
         return bet == res
