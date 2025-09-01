@@ -13,24 +13,29 @@ struct ContentView: View {
 
     var body: some View {
         ScrollView {
+            
             VStack(spacing: 16) {
                 Text("European Roulette")
                     .font(.title2).fontWeight(.semibold)
                 
-                ZStack {
-                    RouletteWheel(pockets: vm.pockets, rotation: vm.rotation)
-                        .frame(width: 300, height: 300)
+                VStack {
                     
-                    // Pointer on top
                     TrianglePointer()
                         .fill(Color.yellow)
-                        .frame(width: 16, height: 16)
-                        .offset(y: -158)
-                        .shadow(radius: 2)
+                        .overlay(
+                            TrianglePointer()
+                                .stroke(Color.white, lineWidth: 1.5)
+                        )
+                        .frame(width: 20, height: 20)
+                        .shadow(radius: 3)
+                    
+                    RouletteWheel(pockets: vm.pockets, rotation: vm.rotation)
+                        .frame(width: 300, height: 300)
                 }
                 .padding(.top, 12)
                 
                 HStack(spacing: 12) {
+                    
                     Button(action: {
                         vm.spin()
                         // show banner shortly after result
@@ -42,14 +47,16 @@ struct ContentView: View {
                         }
                     }) {
                         HStack(spacing: 8) {
-                            Image(systemName: vm.isSpinning ? "arrow.triangle.2.circlepath" : "play.circle.fill")
-                            Text(vm.isSpinning ? "Spinning…" : "Spin")
+                            Image(systemName: vm.isSpinning ? "arrow.triangle.2.circlepath" : (vm.selectedBet == nil ? "hand.tap" : "play.circle.fill"))
+                            Text(vm.isSpinning ? "Spinning…" : (vm.selectedBet == nil ? "Select a number first" : "Spin"))
                                 .fontWeight(.semibold)
                         }
                         .padding(.horizontal, 18).padding(.vertical, 12)
-                        .background(RoundedRectangle(cornerRadius: 16).fill(Color.accentColor.opacity(0.15)))
+                        .background(RoundedRectangle(cornerRadius: 16).fill(
+                            vm.selectedBet == nil ? Color.gray.opacity(0.1) : Color.accentColor.opacity(0.15)
+                        ))
                     }
-                    .disabled(vm.isSpinning)
+                    .disabled(vm.isSpinning || vm.selectedBet == nil)
                     
                     if let res = vm.result {
                         ResultBadge(result: res, win: vm.isWin())

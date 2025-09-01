@@ -23,7 +23,6 @@ final class RouletteVM: ObservableObject {
         }
     }
 
-
     @Published var selectedBet: Int? = nil
     @Published var result: Int? = nil
     @Published var isSpinning: Bool = false
@@ -32,32 +31,35 @@ final class RouletteVM: ObservableObject {
     private let slotAngle: Double = 360.0 / 37.0
 
     func spin() {
-        guard !isSpinning else { return }
+        guard !isSpinning, selectedBet != nil else { return }
 
         isSpinning = true
         result = nil
 
-        // Random target; you can bias or make it deterministic if needed
-        let target = order.randomElement()!
-        let index = order.firstIndex(of: target)!
-
-        // We want the center of the target segment to align with the pointer at the top.
-        let targetCenterFromTop = (Double(index) * slotAngle) + (slotAngle / 2.0)
-
-        // Add several full spins for flair
-        let fullSpins = Double(Int.random(in: 3...6)) * 360.0
-
-        // Rotate NEGATIVE to move clockwise visually (SwiftUI uses screen coords)
-        let newRotation = rotation - (fullSpins + targetCenterFromTop)
+        // Generate random rotation for fair spinning
+        let randomSpins = Double(Int.random(in: 3...6)) * 360.0
+        let randomOffset = Double.random(in: 0...360)
+        
+        // Calculate new rotation
+        let newRotation = rotation - (randomSpins + randomOffset)
 
         withAnimation(.easeOut(duration: 3.2)) {
             rotation = newRotation
         }
 
-        // Mark result after the animation completes
+        // Calculate result based on where the pointer lands after animation
         DispatchQueue.main.asyncAfter(deadline: .now() + 3.2) { [weak self] in
             guard let self = self else { return }
-            self.result = target
+            
+            // Calculate which pocket the pointer is pointing to
+            // The pointer is positioned above the wheel at the top (0 degrees), 
+            // so we need to find which segment is aligned with the top after rotation
+            let normalizedRotation = abs(newRotation.truncatingRemainder(dividingBy: 360))
+            let segmentIndex = Int((normalizedRotation / self.slotAngle).rounded())
+            let actualIndex = segmentIndex % 37
+            
+            // Get the number from the order array at this index
+            self.result = self.order[actualIndex]
             self.isSpinning = false
         }
     }
