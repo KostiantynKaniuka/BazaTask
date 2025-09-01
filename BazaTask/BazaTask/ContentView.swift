@@ -9,7 +9,7 @@ import SwiftUI
 
 struct ContentView: View {
     @StateObject private var vm = RouletteVM()
-
+    
     var body: some View {
         ScrollView {
             
@@ -51,7 +51,7 @@ struct ContentView: View {
                     .disabled(vm.isSpinning || vm.selectedBet == nil)
                     
                     if let res = vm.result {
-                        ResultBadge(result: res, win: $vm.isWin)
+                        ResultBadge(result: res, win: vm.isWin())
                     } else {
                         Text(vm.selectedBet != nil ? "Bet on: \(vm.selectedBet!)" : "Tap a number below to bet")
                             .font(.subheadline)

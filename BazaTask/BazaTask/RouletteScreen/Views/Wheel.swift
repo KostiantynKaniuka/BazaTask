@@ -59,7 +59,7 @@ struct RouletteWheel: View {
             }
         }
         .clipShape(Circle())
-        .rotationEffect(.degrees(-90)) // so index 0 starts at top
+        .rotationEffect(.degrees(-95)) // so index 0 starts at top
         .rotationEffect(.degrees(rotation))
         .shadow(radius: 8)
     }
