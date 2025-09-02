@@ -10,7 +10,7 @@ import SwiftUI
 struct ResultBadge: View {
     let result: Int
     let win: Bool?
-
+    
     var body: some View {
         HStack(spacing: 8) {
             Circle().fill((result == 0) ? .green : (isRed(result) ? .red : .black))
@@ -24,7 +24,7 @@ struct ResultBadge: View {
             }
         }
     }
-
+    
     private func isRed(_ n: Int) -> Bool {
         let reds: Set<Int> = [32,19,21,25,34,27,36,30,23,5,16,1,14,9,18,7,12,3]
         return reds.contains(n)

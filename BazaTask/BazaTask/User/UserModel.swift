@@ -24,5 +24,5 @@ struct User {
             ]
         }
         return ["empty": "empty"]
-       }
-   }
+    }
+}

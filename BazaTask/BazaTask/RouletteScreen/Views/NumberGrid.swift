@@ -11,19 +11,19 @@ struct NumberGrid: View {
     let order: [Int]
     let selected: Int?
     var onTap: (Int) -> Void
-
+    
     // A simple 3-column grid “like” the table (12 rows + zero)
     private var gridNumbers: [Int] {
         // Arrange as 0 + rows of 3 (1-36) just for tapping convenience
         [0] + Array(1...36)
     }
-
+    
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             Text("Place your bet: tap a number")
                 .font(.subheadline)
                 .foregroundStyle(.secondary)
-
+            
             LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 8), count: 3), spacing: 8) {
                 ForEach(gridNumbers, id: \.self) { n in
                     Button(action: { onTap(n) }) {

@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import Firebase
 
 
 final class RouletteVM: ObservableObject {
@@ -28,6 +29,7 @@ final class RouletteVM: ObservableObject {
     
     private var spinningAmount: Int = 0
     private let slotAngle: Double = 360.0 / 37.0
+    private let databaseManager: FireProtocol
     
     @Published var selectedBet: Int? = nil
     @Published var result: Int? = nil
@@ -41,11 +43,12 @@ final class RouletteVM: ObservableObject {
     @Published var pendingNumberSelection: Int? = nil
     @Published var selectedFraction: Int = 1
     
-    init(user: User) {
+    init(user: User, dataBaseManager: FireProtocol) {
         self.user = user
         self.userBalance = user.numberOfChips
+        self.databaseManager = dataBaseManager
     }
-
+    
     func spin() {
         guard !isSpinning, selectedBet != nil else { return }
         
@@ -72,10 +75,14 @@ final class RouletteVM: ObservableObject {
             // Handle payout
             if let betNumber = self.selectedBet, let res = self.result, betNumber == res {
                 self.addChips(self.spinningAmount * 2)
+                //updating balance in database
+                self.databaseManager.updateUserChips(self.user.userId!, self.userBalance)
             }
             self.spinningAmount = 0
+            self.databaseManager.updateUserChips(self.user.userId!, self.userBalance)
             if userBalance == 0 {
                 userBalance += 100
+                self.databaseManager.updateUserChips(self.user.userId!, self.userBalance)
             }
         }
     }
@@ -84,7 +91,7 @@ final class RouletteVM: ObservableObject {
         guard let bet = selectedBet, let res = result else { return nil }
         return bet == res
     }
- 
+    
     // MARK: - Betting Flow
     func beginBet(on number: Int) {
         pendingNumberSelection = number

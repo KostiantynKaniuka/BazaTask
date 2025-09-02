@@ -19,7 +19,7 @@ struct RouletteWheel: View {
             GeometryReader { geo in
                 let size = min(geo.size.width, geo.size.height)
                 let radius = size / 2
-               // let slotAngle = Angle(degrees: 360 / 37)
+                // let slotAngle = Angle(degrees: 360 / 37)
                 
                 ZStack {
                     ForEach(Array(pockets.enumerated()), id: \.offset) { idx, pocket in

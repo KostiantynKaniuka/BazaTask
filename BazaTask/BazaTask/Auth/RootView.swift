@@ -6,18 +6,19 @@
 //
 
 import SwiftUI
+import FirebaseAuth
 
 struct RootView: View {
     @EnvironmentObject var authVM: AuthenticationViewModel
     
     var body: some View {
-            if authVM.authenticationState == .authenticating {
-               // ProgressView("Checking Auth...")
-            } else if authVM.authenticationState == .unauthenticated {
-                ContentView()
-                    .environmentObject(RouletteVM(user: User(userId: "test", name: "test", numberOfChips: 2000, winRate: 0.0)))
-            } else {
-                LoginView()
-            }
+        if authVM.authenticationState == .authenticating {
+            ProgressView("Checking Auth...")
+        } else if authVM.authenticationState == .authenticated {
+            ContentView()
+                .environmentObject(RouletteVM(user: authVM.user ?? User(userId: "", name: "player", numberOfChips: 1000, winRate: 100.0), dataBaseManager: authVM.dataBaseManager))
+        } else {
+            LoginView()
+        }
     }
 }
