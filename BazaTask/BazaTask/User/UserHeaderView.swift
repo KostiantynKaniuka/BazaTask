@@ -49,6 +49,6 @@ struct UserHeaderView: View {
 }
 
 #Preview {
-    UserHeaderView(user: User(name: "Tigon", numberOfChips: 138595), balance: 138595)
+    UserHeaderView(user: User(userId: nil, name: "Tigon", numberOfChips: 138595, winRate: 100), balance: 138595)
 }
 

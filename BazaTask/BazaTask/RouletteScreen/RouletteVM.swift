@@ -92,6 +92,12 @@ final class RouletteVM: ObservableObject {
         isShowingBetOptions = true
     }
     
+    func amount(for fraction: Int, balance: Int? = nil) -> Int {
+        let balanceToUse = balance ?? userBalance
+        let computed = (balanceToUse * fraction) / 10
+        return max(1, computed)
+    }
+    
     func cancelBetSelection() {
         isShowingBetOptions = false
         pendingNumberSelection = nil
@@ -118,12 +124,6 @@ private extension RouletteVM {
     
     func addChips(_ count: Int) {
         userBalance += count
-    }
-    
-    func amount(for fraction: Int, balance: Int? = nil) -> Int {
-        let balanceToUse = balance ?? userBalance
-        let computed = (balanceToUse * fraction) / 10
-        return max(1, computed)
     }
     
     func betChips(_ count: Int) {

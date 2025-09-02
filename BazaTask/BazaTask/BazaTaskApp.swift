@@ -6,13 +6,27 @@
 //
 
 import SwiftUI
+import FirebaseCore
+
+class AppDelegate: NSObject, UIApplicationDelegate {
+  func application(_ application: UIApplication,
+                   didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
+    FirebaseApp.configure()
+
+    return true
+  }
+}
 
 @main
 struct BazaTaskApp: App {
+    @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
+    
     var body: some Scene {
         WindowGroup {
-            ContentView()
-                .environmentObject(RouletteVM(user: User(name: "test", numberOfChips: 52555)))
+          RootView()
+                .environmentObject(AuthenticationViewModel(databaseManager: FireBaseApiManager()))
+         //   ContentView()
+             //   .environmentObject(RouletteVM(user: User(userId: nil, name: "test", numberOfChips: 52555, winRate: 100)))
         }
     }
 }

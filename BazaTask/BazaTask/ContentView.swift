@@ -81,5 +81,5 @@ struct ContentView: View {
 
 #Preview {
     ContentView()
-        .environmentObject(RouletteVM(user: User(name: "Joseph", numberOfChips: 1000)))
+        .environmentObject(RouletteVM(user: User(userId: nil, name: "Joseph", numberOfChips: 1000, winRate: 100)))
 }
