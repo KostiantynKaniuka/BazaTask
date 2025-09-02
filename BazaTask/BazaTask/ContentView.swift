@@ -12,7 +12,7 @@ struct ContentView: View {
     
     var body: some View {
         ScrollView {
-                UserHeaderView(user: vm.user)
+                UserHeaderView(user: vm.user, balance: vm.userBalance)
                 .padding(4)
                 VStack {
                     
@@ -61,7 +61,7 @@ struct ContentView: View {
                 
                 NumberGrid(order: vm.order, selected: vm.selectedBet) { tapped in
                     vm.selectedBet = tapped
-                    print("bet on \(tapped)")
+                    vm.betChips(1000)
                 }
                 .padding(.horizontal)
             }

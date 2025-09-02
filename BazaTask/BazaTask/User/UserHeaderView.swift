@@ -10,6 +10,7 @@ import SwiftUI
 
 struct UserHeaderView: View {
     let user: User
+    let balance: Int
     
     var body: some View {
         HStack(spacing: 12) {
@@ -30,7 +31,7 @@ struct UserHeaderView: View {
             Spacer()
             
             HStack(spacing: 8) {
-                Text(user.numberOfChips.formatted())
+                Text(balance.formatted())
                     .font(.title2)
                     .fontWeight(.heavy)
                     .foregroundStyle(Color.yellow)
@@ -48,6 +49,6 @@ struct UserHeaderView: View {
 }
 
 #Preview {
-    UserHeaderView(user: User(name: "Tigon", numberOfChips: 138595))
+    UserHeaderView(user: User(name: "Tigon", numberOfChips: 138595), balance: 138595)
 }
 
