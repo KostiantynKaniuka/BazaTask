@@ -60,12 +60,24 @@ struct ContentView: View {
                 Divider().padding(.vertical, 4)
                 
                 NumberGrid(order: vm.order, selected: vm.selectedBet) { tapped in
-                    vm.selectedBet = tapped
-                    vm.betChips(1000)
+                    vm.beginBet(on: tapped)
                 }
                 .padding(.horizontal)
             }
             .padding()
+            .confirmationDialog("Choose bet fraction", isPresented: $vm.isShowingBetOptions, titleVisibility: .visible) {
+                ForEach(1...10, id: \.self) { frac in
+                    let amt = vm.amount(for: frac)
+                    Button("\(frac)/10 — bet \(amt)") { vm.confirmBetSelection(fraction: frac)
+                    }
+                }
+                Button("Cancel", role: .cancel) { vm.cancelBetSelection() }
+            }
+            .alert("Insufficient funds", isPresented: $vm.isShowingInsufficientAlert) {
+                Button("OK", role: .cancel) { }
+            } message: {
+                Text("You don't have enough chips for this bet.")
+            }
         }
     }
 

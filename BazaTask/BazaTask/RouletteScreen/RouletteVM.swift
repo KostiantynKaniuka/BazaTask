@@ -25,12 +25,19 @@ final class RouletteVM: ObservableObject {
     }
     
     var user: User
+    private var spinningAmount: Int = 0
     
     @Published var selectedBet: Int? = nil
     @Published var result: Int? = nil
     @Published var isSpinning: Bool = false
     @Published var rotation: Double = 0
     @Published var userBalance:Int
+    
+    // Betting flow state
+    @Published var isShowingBetOptions: Bool = false
+    @Published var isShowingInsufficientAlert: Bool = false
+    @Published var pendingNumberSelection: Int? = nil
+    @Published var selectedFraction: Int = 1 
     
     init(user: User) {
         self.user = user
@@ -60,13 +67,14 @@ final class RouletteVM: ObservableObject {
             let segmentIndex = Int((normalizedRotation / self.slotAngle).rounded())
             let actualIndex = segmentIndex % 37
             
-            self.result = self.order[actualIndex]
+            self.result = 3//self.order[actualIndex]
             self.isSpinning = false
         }
     }
     
     func isWin() -> Bool? {
         guard let bet = selectedBet, let res = result else { return nil }
+        addChips(spinningAmount)
         return bet == res
     }
     
@@ -75,7 +83,47 @@ final class RouletteVM: ObservableObject {
     }
     
  func betChips(_ count: Int) {
+     guard userBalance >= count else {
+         // Not enough funds for chosen fraction
+         isShowingInsufficientAlert = true
+         pendingNumberSelection = nil
+         return
+     }
         guard userBalance >= 0 && userBalance >= count else {return}
         userBalance -= count
+    }
+    
+    // MARK: - Betting Flow
+    func beginBet(on number: Int) {
+        pendingNumberSelection = number
+        selectedFraction = 1
+        isShowingBetOptions = true
+    }
+    
+    func cancelBetSelection() {
+        isShowingBetOptions = false
+        pendingNumberSelection = nil
+    }
+    
+    func amount(for fraction: Int, balance: Int? = nil) -> Int {
+        let balanceToUse = balance ?? userBalance
+        let computed = (balanceToUse * fraction) / 10
+        return max(1, computed)
+    }
+    
+    func confirmBetSelection(fraction: Int) {
+        guard let number = pendingNumberSelection else { return }
+        let amountToBet = amount(for: fraction)
+        spinningAmount = amountToBet
+        guard userBalance >= amountToBet else {
+            isShowingBetOptions = false
+            isShowingInsufficientAlert = true
+            pendingNumberSelection = nil
+            return
+        }
+        selectedBet = number
+        betChips(amountToBet)
+        isShowingBetOptions = false
+        pendingNumberSelection = nil
     }
 }
