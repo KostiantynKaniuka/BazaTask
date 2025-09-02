@@ -12,6 +12,7 @@ struct BazaTaskApp: App {
     var body: some Scene {
         WindowGroup {
             ContentView()
+                .environmentObject(RouletteVM(user: User(name: "test", numberOfChips: 52555)))
         }
     }
 }

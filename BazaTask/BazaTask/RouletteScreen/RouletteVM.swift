@@ -24,14 +24,17 @@ final class RouletteVM: ObservableObject {
         }
     }
     
+    var user: User
+    
     @Published var selectedBet: Int? = nil
     @Published var result: Int? = nil
     @Published var isSpinning: Bool = false
     @Published var rotation: Double = 0
-    @Published var user: User
+    @Published var userBalance:Int
     
     init(user: User) {
         self.user = user
+        self.userBalance = user.numberOfChips
     }
    
     private let slotAngle: Double = 360.0 / 37.0
@@ -41,7 +44,7 @@ final class RouletteVM: ObservableObject {
         
         isSpinning = true
         result = nil
-        
+     
         let randomSpins = Double(Int.random(in: 3...6)) * 360.0
         let randomOffset = Double.random(in: 0...360)
         let newRotation = rotation - (randomSpins + randomOffset)
@@ -65,5 +68,14 @@ final class RouletteVM: ObservableObject {
     func isWin() -> Bool? {
         guard let bet = selectedBet, let res = result else { return nil }
         return bet == res
+    }
+    
+ func addChips(_ count: Int) {
+        userBalance += count
+    }
+    
+ func betChips(_ count: Int) {
+        guard userBalance >= 0 && userBalance >= count else {return}
+        userBalance -= count
     }
 }

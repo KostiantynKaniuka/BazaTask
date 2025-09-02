@@ -12,14 +12,8 @@ struct ContentView: View {
     
     var body: some View {
         ScrollView {
-            VStack(spacing: 16) {
-                VStack(spacing: 16) {
-                    Text("European Roulette")
-                        .font(.title2).fontWeight(.semibold)
-                    Text("\(vm.user.name)  \(vm.user.numberOfChips)")
-                }
-            }
-                
+                UserHeaderView(user: vm.user)
+                .padding(4)
                 VStack {
                     
                     TrianglePointer()
