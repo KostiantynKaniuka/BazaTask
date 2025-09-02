@@ -15,7 +15,6 @@ struct ContentView: View {
                 UserHeaderView(user: vm.user, balance: vm.userBalance)
                 .padding(4)
                 VStack {
-                    
                     TrianglePointer()
                         .fill(Color.yellow)
                         .overlay(
@@ -29,9 +28,7 @@ struct ContentView: View {
                         .frame(width: 300, height: 300)
                 }
                 .padding(.top, 12)
-                
                 HStack(spacing: 12) {
-                    
                     Button(action: {
                         vm.spin()
                     }) {

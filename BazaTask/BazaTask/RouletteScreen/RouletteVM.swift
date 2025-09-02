@@ -37,13 +37,13 @@ final class RouletteVM: ObservableObject {
     @Published var isShowingBetOptions: Bool = false
     @Published var isShowingInsufficientAlert: Bool = false
     @Published var pendingNumberSelection: Int? = nil
-    @Published var selectedFraction: Int = 1 
+    @Published var selectedFraction: Int = 1
     
     init(user: User) {
         self.user = user
         self.userBalance = user.numberOfChips
     }
-   
+    
     private let slotAngle: Double = 360.0 / 37.0
     
     func spin() {
@@ -51,7 +51,7 @@ final class RouletteVM: ObservableObject {
         
         isSpinning = true
         result = nil
-     
+        
         let randomSpins = Double(Int.random(in: 3...6)) * 360.0
         let randomOffset = Double.random(in: 0...360)
         let newRotation = rotation - (randomSpins + randomOffset)
@@ -60,7 +60,7 @@ final class RouletteVM: ObservableObject {
             rotation = newRotation
         }
         
-       
+        
         DispatchQueue.main.asyncAfter(deadline: .now() + 3.2) { [weak self] in
             guard let self = self else { return }
             let normalizedRotation = abs(newRotation.truncatingRemainder(dividingBy: 360))
@@ -69,13 +69,18 @@ final class RouletteVM: ObservableObject {
             
             self.result = self.order[actualIndex]
             self.isSpinning = false
-
-            // Handle payout after spin completes to avoid publishing during view updates
+            
+            // Handle payout
             if let betNumber = self.selectedBet, let res = self.result, betNumber == res {
                 self.addChips(self.spinningAmount * 2)
             }
             self.spinningAmount = 0
+            if userBalance == 0 {
+                userBalance += 100
+            }
         }
+        
+        
     }
     
     func isWin() -> Bool? {
@@ -83,17 +88,17 @@ final class RouletteVM: ObservableObject {
         return bet == res
     }
     
- func addChips(_ count: Int) {
+    func addChips(_ count: Int) {
         userBalance += count
     }
     
- func betChips(_ count: Int) {
-     guard userBalance >= count else {
-         // Not enough funds for chosen fraction
-         isShowingInsufficientAlert = true
-         pendingNumberSelection = nil
-         return
-     }
+    func betChips(_ count: Int) {
+        guard userBalance >= count else {
+            // Not enough funds for chosen fraction
+            isShowingInsufficientAlert = true
+            pendingNumberSelection = nil
+            return
+        }
         guard userBalance >= 0 && userBalance >= count else {return}
         userBalance -= count
     }
