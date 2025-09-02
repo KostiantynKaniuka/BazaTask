@@ -25,7 +25,9 @@ final class RouletteVM: ObservableObject {
     }
     
     var user: User
+    
     private var spinningAmount: Int = 0
+    private let slotAngle: Double = 360.0 / 37.0
     
     @Published var selectedBet: Int? = nil
     @Published var result: Int? = nil
@@ -43,9 +45,7 @@ final class RouletteVM: ObservableObject {
         self.user = user
         self.userBalance = user.numberOfChips
     }
-    
-    private let slotAngle: Double = 360.0 / 37.0
-    
+
     func spin() {
         guard !isSpinning, selectedBet != nil else { return }
         
@@ -59,7 +59,6 @@ final class RouletteVM: ObservableObject {
         withAnimation(.easeOut(duration: 3.2)) {
             rotation = newRotation
         }
-        
         
         DispatchQueue.main.asyncAfter(deadline: .now() + 3.2) { [weak self] in
             guard let self = self else { return }
@@ -79,30 +78,13 @@ final class RouletteVM: ObservableObject {
                 userBalance += 100
             }
         }
-        
-        
     }
     
     func isWin() -> Bool? {
         guard let bet = selectedBet, let res = result else { return nil }
         return bet == res
     }
-    
-    func addChips(_ count: Int) {
-        userBalance += count
-    }
-    
-    func betChips(_ count: Int) {
-        guard userBalance >= count else {
-            // Not enough funds for chosen fraction
-            isShowingInsufficientAlert = true
-            pendingNumberSelection = nil
-            return
-        }
-        guard userBalance >= 0 && userBalance >= count else {return}
-        userBalance -= count
-    }
-    
+ 
     // MARK: - Betting Flow
     func beginBet(on number: Int) {
         pendingNumberSelection = number
@@ -113,12 +95,6 @@ final class RouletteVM: ObservableObject {
     func cancelBetSelection() {
         isShowingBetOptions = false
         pendingNumberSelection = nil
-    }
-    
-    func amount(for fraction: Int, balance: Int? = nil) -> Int {
-        let balanceToUse = balance ?? userBalance
-        let computed = (balanceToUse * fraction) / 10
-        return max(1, computed)
     }
     
     func confirmBetSelection(fraction: Int) {
@@ -135,5 +111,29 @@ final class RouletteVM: ObservableObject {
         betChips(amountToBet)
         isShowingBetOptions = false
         pendingNumberSelection = nil
+    }
+}
+
+private extension RouletteVM {
+    
+    func addChips(_ count: Int) {
+        userBalance += count
+    }
+    
+    func amount(for fraction: Int, balance: Int? = nil) -> Int {
+        let balanceToUse = balance ?? userBalance
+        let computed = (balanceToUse * fraction) / 10
+        return max(1, computed)
+    }
+    
+    func betChips(_ count: Int) {
+        guard userBalance >= count else {
+            // Not enough funds for chosen fraction
+            isShowingInsufficientAlert = true
+            pendingNumberSelection = nil
+            return
+        }
+        guard userBalance >= 0 && userBalance >= count else {return}
+        userBalance -= count
     }
 }
