@@ -67,14 +67,19 @@ final class RouletteVM: ObservableObject {
             let segmentIndex = Int((normalizedRotation / self.slotAngle).rounded())
             let actualIndex = segmentIndex % 37
             
-            self.result = 3//self.order[actualIndex]
+            self.result = self.order[actualIndex]
             self.isSpinning = false
+
+            // Handle payout after spin completes to avoid publishing during view updates
+            if let betNumber = self.selectedBet, let res = self.result, betNumber == res {
+                self.addChips(self.spinningAmount * 2)
+            }
+            self.spinningAmount = 0
         }
     }
     
     func isWin() -> Bool? {
         guard let bet = selectedBet, let res = result else { return nil }
-        addChips(spinningAmount)
         return bet == res
     }
     
