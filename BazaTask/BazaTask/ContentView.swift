@@ -8,14 +8,17 @@
 import SwiftUI
 
 struct ContentView: View {
-    @StateObject private var vm = RouletteVM()
+    @EnvironmentObject private var vm: RouletteVM
     
     var body: some View {
         ScrollView {
-            
             VStack(spacing: 16) {
-                Text("European Roulette")
-                    .font(.title2).fontWeight(.semibold)
+                VStack(spacing: 16) {
+                    Text("European Roulette")
+                        .font(.title2).fontWeight(.semibold)
+                    Text("\(vm.user.name)  \(vm.user.numberOfChips)")
+                }
+            }
                 
                 VStack {
                     
@@ -64,14 +67,16 @@ struct ContentView: View {
                 
                 NumberGrid(order: vm.order, selected: vm.selectedBet) { tapped in
                     vm.selectedBet = tapped
+                    print("bet on \(tapped)")
                 }
                 .padding(.horizontal)
             }
             .padding()
         }
     }
-}
+
 
 #Preview {
     ContentView()
+        .environmentObject(RouletteVM(user: User(name: "Joseph", numberOfChips: 1000)))
 }

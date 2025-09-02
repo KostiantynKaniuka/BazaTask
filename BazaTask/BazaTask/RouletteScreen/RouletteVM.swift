@@ -7,6 +7,7 @@
 
 import SwiftUI
 
+
 final class RouletteVM: ObservableObject {
     
     let order: [Int] = [
@@ -27,7 +28,12 @@ final class RouletteVM: ObservableObject {
     @Published var result: Int? = nil
     @Published var isSpinning: Bool = false
     @Published var rotation: Double = 0
+    @Published var user: User
     
+    init(user: User) {
+        self.user = user
+    }
+   
     private let slotAngle: Double = 360.0 / 37.0
     
     func spin() {
