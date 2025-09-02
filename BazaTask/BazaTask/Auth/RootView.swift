@@ -14,9 +14,11 @@ struct RootView: View {
     var body: some View {
         if authVM.authenticationState == .authenticating {
             ProgressView("Checking Auth...")
-        } else if authVM.authenticationState == .authenticated {
+        } else if authVM.authenticationState == .authenticated && authVM.user != nil {
             ContentView()
-                .environmentObject(RouletteVM(user: authVM.user ?? User(userId: "", name: "player", numberOfChips: 1000, winRate: 100.0), dataBaseManager: authVM.dataBaseManager))
+                .environmentObject(RouletteVM(user: authVM.user!, dataBaseManager: authVM.dataBaseManager))
+        } else if authVM.authenticationState == .authenticated && authVM.user == nil {
+            ProgressView("Loading user data...")
         } else {
             LoginView()
         }

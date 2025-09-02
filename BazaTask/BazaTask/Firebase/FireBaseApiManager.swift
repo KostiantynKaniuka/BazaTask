@@ -10,7 +10,7 @@ import FirebaseCore
 import FirebaseDatabase
 
 protocol FireProtocol {
-    func addUserToFirebase(user: User)
+    func addUserToFirebase(user: User, completion: @escaping () -> Void)
     func getUserFromDB(_ id: String, completion: @escaping (User?) -> Void)
     func checkUserIndb(_ id: String, completion: @escaping (Bool) -> Void)
     func updateUserChips(_ userId: String, _ chips: Int)
@@ -25,11 +25,16 @@ final class FireBaseApiManager: FireProtocol {
     }
     
     //MARK: - Adding user to db
-    func addUserToFirebase(user: User) {
+    func addUserToFirebase(user: User, completion: @escaping () -> Void) {
         let db = configureFB()
         let usersRef = db.child("users")
         let userRef = usersRef.child("\(user.userId ?? "")")
-        userRef.setValue(user.toDictionary())
+        userRef.setValue(user.toDictionary()) { error, _ in
+            if let error = error {
+                print("Error adding user to Firebase: \(error.localizedDescription)")
+            }
+            completion()
+        }
     }
     
     func updateUserChips(_ userId: String, _ chips: Int) {

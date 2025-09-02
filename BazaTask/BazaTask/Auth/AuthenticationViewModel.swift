@@ -29,8 +29,6 @@ final class AuthenticationViewModel: ObservableObject {
         registerAuthStateHandler()
     }
     
-    
-    
     func logIn() async {
         do {
             let result = try await Auth.auth().signInAnonymously()
@@ -48,22 +46,23 @@ final class AuthenticationViewModel: ObservableObject {
                                 numberOfChips: player.numberOfChips,
                                 winRate: player.winRate
                             )
+                            self.authenticationState = .authenticated
                         }
                     }
                     
                     print("Hello \(user)")
-                    self.authenticationState = .authenticated
                     
                 } else {
-                    self.dataBaseManager.addUserToFirebase(
-                        user: User(
-                            userId: user.uid,
-                            name: "Player",
-                            numberOfChips: 2000,
-                            winRate: 0.0
-                        )
+                    let newUser = User(
+                        userId: user.uid,
+                        name: "Player",
+                        numberOfChips: 2000,
+                        winRate: 0.0
                     )
-                    self.authenticationState = .authenticated
+                    self.dataBaseManager.addUserToFirebase(user: newUser) {
+                        self.user = newUser
+                        self.authenticationState = .authenticated
+                    }
                 }
             }
             
@@ -87,8 +86,8 @@ private extension AuthenticationViewModel {
                                 numberOfChips: player.numberOfChips,
                                 winRate: player.winRate
                             )
+                            self?.authenticationState = .authenticated
                         }
-                        self?.authenticationState = .authenticated
                     }
                 } else {
                     self?.authenticationState = .unauthenticated
@@ -99,7 +98,7 @@ private extension AuthenticationViewModel {
     
     private func checkAuthState() {
         if Auth.auth().currentUser != nil {
-            authenticationState = .authenticated
+            authenticationState = .authenticating
         } else {
             authenticationState = .unauthenticated
         }
