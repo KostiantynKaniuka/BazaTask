@@ -65,6 +65,3 @@ struct RatingRowView: View {
     }
     .padding()
 }
-
-
-

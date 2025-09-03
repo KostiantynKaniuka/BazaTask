@@ -35,5 +35,3 @@ private let vmCurrentPlaceholder = User(userId: nil, name: "Me", numberOfChips: 
 #Preview {
     RatingView(vm: RatingVM(currentUser: User(userId: "1", name: "Me", numberOfChips: 138595, winRate: 16.15), databaseManager: FireBaseApiManager()))
 }
-
-

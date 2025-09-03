@@ -13,14 +13,11 @@ struct RouletteWheel: View {
     
     var body: some View {
         ZStack {
-            Circle().fill(Color(hue: 0.35, saturation: 0.8, brightness: 0.25)) // felt background hint
-            
+            Circle().fill(Color(hue: 0.35, saturation: 0.8, brightness: 0.25))
             // Segments
             GeometryReader { geo in
                 let size = min(geo.size.width, geo.size.height)
                 let radius = size / 2
-                // let slotAngle = Angle(degrees: 360 / 37)
-                
                 ZStack {
                     ForEach(Array(pockets.enumerated()), id: \.offset) { idx, pocket in
                         let start = Angle(degrees: Double(idx) * (360.0/37.0))
@@ -32,7 +29,6 @@ struct RouletteWheel: View {
                                 SegmentShape(startAngle: start, endAngle: end)
                                     .stroke(Color.white.opacity(0.6), lineWidth: 1)
                             )
-                        
                         // Number label along the ring
                         let mid = Angle(degrees: (Double(idx) + 0.5) * (360.0/37.0))
                         Text("\(pocket.number)")
@@ -43,7 +39,6 @@ struct RouletteWheel: View {
                             .rotationEffect(mid)
                             .rotationEffect(.degrees(90)) // make upright from tangent
                     }
-                    
                     // Inner hub
                     Circle()
                         .fill(Color(white: 0.1))
@@ -87,7 +82,6 @@ struct SegmentShape: Shape {
 struct TrianglePointer: Shape {
     func path(in rect: CGRect) -> Path {
         var path = Path()
-        // Flip the triangle upside down - point at the bottom, base at the top
         path.move(to: CGPoint(x: rect.midX, y: rect.maxY))
         path.addLine(to: CGPoint(x: rect.minX, y: rect.minY))
         path.addLine(to: CGPoint(x: rect.maxX, y: rect.minY))

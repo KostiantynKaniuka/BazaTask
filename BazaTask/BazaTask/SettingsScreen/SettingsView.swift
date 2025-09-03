@@ -13,7 +13,7 @@ struct SettingsView: View {
     @Environment(\.requestReview) private var requestReview
     @State private var isShowingShare: Bool = false
     
-    private let shareURL = URL(string: "https://example.com/app/roulette-pro")!
+    private let shareURL = URL(string: "https://www.youtube.com/")!
     
     var body: some View {
         VStack{
@@ -32,7 +32,8 @@ struct SettingsView: View {
                     authVM.logOut()
                 }
                 settingsButton(title: "Delete Account", systemImage: "trash.fill", color: .red) {
-                    authVM.deleteAccount { _ in }
+                    authVM.deleteAccount { _ in
+                        print("account deleted")}
                 }
             }
             .padding()
@@ -77,5 +78,3 @@ private struct ActivityView: UIViewControllerRepresentable {
 #Preview {
     SettingsView().environmentObject(AuthenticationViewModel(databaseManager: FireBaseApiManager()))
 }
-
-

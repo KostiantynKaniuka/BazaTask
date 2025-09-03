@@ -38,5 +38,3 @@ final class RatingVM: ObservableObject {
         }
     }
 }
-
-
