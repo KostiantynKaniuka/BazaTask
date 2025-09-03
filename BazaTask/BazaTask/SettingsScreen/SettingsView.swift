@@ -78,3 +78,4 @@ private struct ActivityView: UIViewControllerRepresentable {
 #Preview {
     SettingsView().environmentObject(AuthenticationViewModel(databaseManager: FireBaseApiManager()))
 }
+
