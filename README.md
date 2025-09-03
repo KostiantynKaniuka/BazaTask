@@ -26,10 +26,10 @@ A SwiftUI iOS app powered by Firebase for anonymous authentication and a simple 
   - **Settings**: log out or delete the account (deletes auth user and DB entry).
 
 <p>
-  <img src="docs/screenshots/roulette.png" alt="Roulette screen" width="260"/>
-  <img src="docs/screenshots/top.png" alt="Top leaderboard" width="260"/>
-  <img src="docs/screenshots/settings.png" alt="Settings screen" width="260"/>
-  
+<img width="200" height="450" alt="simulator_screenshot_45E633F0-BD38-4E03-A41F-3AC67412941A" src="https://github.com/user-attachments/assets/19890611-93e9-41db-864f-8f77e9145e03" />
+<img width="200" height="450" alt="simulator_screenshot_12388B94-B625-4070-8F0E-7918ADCC887A" src="https://github.com/user-attachments/assets/6707a51e-775e-4816-b38e-270b2f143e0e" />
+<img width="200" height="450" alt="simulator_screenshot_B937AEC6-9D42-43EE-8742-7579167916D1" src="https://github.com/user-attachments/assets/70052117-b5a3-4cd1-9429-32a3875b71cd" />
+
 </p>
 
 ### Tech Notes
