@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct ContentView: View {
+struct RouletteView: View {
     @EnvironmentObject private var vm: RouletteVM
     
     var body: some View {
@@ -80,6 +80,6 @@ struct ContentView: View {
 
 
 #Preview {
-    ContentView()
+    RouletteView()
         .environmentObject(RouletteVM(user: User(userId: nil, name: "Joseph", numberOfChips: 1000, winRate: 100), dataBaseManager: FireBaseApiManager()))
 }
