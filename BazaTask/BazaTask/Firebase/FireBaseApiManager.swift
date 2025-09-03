@@ -14,6 +14,7 @@ protocol FireProtocol {
     func getUserFromDB(_ id: String, completion: @escaping (User?) -> Void)
     func checkUserIndb(_ id: String, completion: @escaping (Bool) -> Void)
     func updateUserChips(_ userId: String, _ chips: Int)
+    func getAllUsers(completion: @escaping ([User]) -> Void)
 }
 
 final class FireBaseApiManager: FireProtocol {
@@ -62,6 +63,25 @@ final class FireBaseApiManager: FireProtocol {
             }
             completion(userData)
         })
+    }
+    
+    //MARK: - Get all users for ratings
+    func getAllUsers(completion: @escaping ([User]) -> Void) {
+        let db = configureFB()
+        db.child("users").observe(.value) { snapshot in
+            var result: [User] = []
+            for case let child as DataSnapshot in snapshot.children {
+                if let dataDict = child.value as? [String: Any] {
+                    let id = dataDict["id"] as? String ?? ""
+                    let name = dataDict["name"] as? String ?? ""
+                    let numberOfChips = dataDict["numberOfChips"] as? Int ?? 0
+                    let winRate = dataDict["winRate"] as? Double ?? 0.0
+                    let user = User(userId: id, name: name, numberOfChips: numberOfChips, winRate: winRate)
+                    result.append(user)
+                }
+            }
+            completion(result)
+        }
     }
     
     func checkUserIndb(_ id: String, completion: @escaping (Bool) -> Void) {

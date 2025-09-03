@@ -3,7 +3,7 @@
 //  UserHeaderView.swift
 //  BazaTask
 //
-//  Created by Assistant on 02.09.2025.
+//  Created by Kostiantyn Kaniuka on 02.09.2025.
 //
 
 import SwiftUI
