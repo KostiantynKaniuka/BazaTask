@@ -15,6 +15,7 @@ protocol FireProtocol {
     func checkUserIndb(_ id: String, completion: @escaping (Bool) -> Void)
     func updateUserChips(_ userId: String, _ chips: Int)
     func getAllUsers(completion: @escaping ([User]) -> Void)
+    func deleteUser(_ userId: String, completion: @escaping (Bool) -> Void)
 }
 
 final class FireBaseApiManager: FireProtocol {
@@ -81,6 +82,19 @@ final class FireBaseApiManager: FireProtocol {
                 }
             }
             completion(result)
+        }
+    }
+    
+    //MARK: - Delete user from Realtime DB
+    func deleteUser(_ userId: String, completion: @escaping (Bool) -> Void) {
+        let db = configureFB()
+        db.child("users").child(userId).removeValue { error, _ in
+            if let error = error {
+                print("Error deleting user: \(error.localizedDescription)")
+                completion(false)
+            } else {
+                completion(true)
+            }
         }
     }
     

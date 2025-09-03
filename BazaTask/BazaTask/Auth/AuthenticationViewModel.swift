@@ -21,7 +21,7 @@ final class AuthenticationViewModel: ObservableObject {
     var dataBaseManager: FireProtocol
     var user: User?
     
-    @Published var authenticationState: AuthenticationState = .authenticating
+    @Published var authenticationState: AuthenticationState = .authenticating // controlling navigation at RootView
     private var authStateHandle: AuthStateDidChangeListenerHandle?
     
     init(databaseManager: FireProtocol) {
@@ -68,6 +68,38 @@ final class AuthenticationViewModel: ObservableObject {
             
         } catch {
             print(error.localizedDescription)
+        }
+    }
+    
+    func logOut() {
+        do {
+            try Auth.auth().signOut()
+            user = nil
+            authenticationState = .unauthenticated
+        } catch {
+            print("Sign out error: \(error.localizedDescription)")
+        }
+    }
+    
+    func deleteAccount(completion: @escaping (Bool) -> Void) {
+        guard let firebaseUser = Auth.auth().currentUser, let id = firebaseUser.uid as String? else {
+            completion(false)
+            return
+        }
+        dataBaseManager.deleteUser(id) { [weak self] success in
+            guard success else { completion(false); return }
+            firebaseUser.delete { error in
+                if let error = error {
+                    print("Delete auth user error: \(error.localizedDescription)")
+                    completion(false)
+                } else {
+                    DispatchQueue.main.async {
+                        self?.user = nil
+                        self?.authenticationState = .unauthenticated
+                    }
+                    completion(true)
+                }
+            }
         }
     }
 }

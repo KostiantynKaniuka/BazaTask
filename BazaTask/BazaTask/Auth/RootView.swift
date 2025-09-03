@@ -24,11 +24,17 @@ struct RootView: View {
                         Image(systemName: "die.face.4")
                         Text("Roulette")
                     }
-                    RatingView(vm: ratingVM)
-                .tabItem {
-                    Image(systemName: "star.fill")
-                    Text("Top")
-                }
+                RatingView(vm: ratingVM)
+                    .tabItem {
+                        Image(systemName: "star.fill")
+                        Text("Top")
+                    }
+                SettingsView()
+                    .environmentObject(authVM)
+                    .tabItem {
+                        Image(systemName: "gearshape.fill")
+                        Text("Settings")
+                    }
             }
         } else if authVM.authenticationState == .authenticated && authVM.user == nil {
             ProgressView("Loading user data...")
